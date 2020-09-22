@@ -1,6 +1,6 @@
 "use strict";
 const path = require('path');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 require('dotenv').config();
 const express = require("express");
 const myDB = require('./connection');
