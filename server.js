@@ -29,6 +29,14 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+//Middleware function check if user is authenticated?
+function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/');
+};
+
 myDB(async client => {
     const myDataBase = await client.db('database').collection('users');
 
@@ -72,8 +80,8 @@ myDB(async client => {
         })(req, res, next);
     })
 
-    app.route('/profile').get((req, res) => {
-        res.render('/pug/profile');
+    app.route('/profile').get(ensureAuthenticated, (req, res) => {
+        res.render('pug/profile');
     })
 
 }).catch(e => {
