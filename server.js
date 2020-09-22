@@ -81,12 +81,18 @@ myDB(async client => {
     })
 
     app.route('/profile').get(ensureAuthenticated, (req, res) => {
-        res.render('pug/profile');
+        res.render('pug/profile', {
+            username: req.user.username
+        });
     })
 
 }).catch(e => {
     app.route('/').get((req, res) => {
-        res.render('pug/index', { title: e, showLogin: true, message: 'Unable to login' });
+        res.render('pug/index', {
+            title: e,
+            showLogin: true,
+            message: 'Unable to login'
+        });
     });
 });
 
