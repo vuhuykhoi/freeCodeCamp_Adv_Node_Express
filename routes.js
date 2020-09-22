@@ -16,7 +16,7 @@ module.exports = function(app, myDataBase) {
     //User login
     app.route('/login').post((req, res, next) => {
         passport.authenticate('local', {
-            successRedirect: '/profile',
+            successRedirect: '/chat',
             failureRedirect: '/'
         })(req, res, next);
     })
@@ -24,7 +24,8 @@ module.exports = function(app, myDataBase) {
     //Github login strategy
     app.route('/auth/github').get(passport.authenticate('github'));
     app.route('/auth/github/callback').get(passport.authenticate('github', { failureRedirect: '/' }), (req, res) => {
-        res.redirect('/profile');
+        req.session.user_id = req.user.id
+        res.redirect('/chat');
     });
 
     //User logout
@@ -72,6 +73,12 @@ module.exports = function(app, myDataBase) {
         });
     })
 
+    //Chat
+    app.route('/chat').get(ensureAuthenticated, (req, res) => {
+        res.render('pug/chat', {
+            user: req.user
+        })
+    })
 
     //Error Handle
     app.use((req, res, next) => {

@@ -1,15 +1,13 @@
-$(document).ready(function () {
-
-
+// This file's full path is /public/client.js
+$(document).ready(function() {
+    /* Global io */
+    let socket = io();
 
     // Form submittion with new message in field with id 'm'
-    $('form').submit(function () {
-        var messageToSend = $('#m').val();
-        //send message to server here?
+    $('form').submit(function() {
+        let messageToSend = $('#m').val();
+        // Send message to server here?
         $('#m').val('');
-        return false; // prevent form submit from refreshing page
+        return false; // Prevent form submit from refreshing page
     });
-
-
-
 });
