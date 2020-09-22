@@ -29,21 +29,32 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-//Serialize | Deserialize User
-passport.serializeUser((user, done) => {
-    done(null, user._id);
-});
+myDB(async client => {
+    const myDataBase = await client.db('database').collection('users');
 
-passport.deserializeUser((id, done) => {
-    myDataBase.findOne({ _id: new ObjectID(id) }, (err, doc) => {
-        done(null, null);
+    // Be sure to change the title
+    app.route('/').get((req, res) => {
+        //Change the response to render the Pug template
+        res.render('pug/index', {
+            title: 'Connected to Database',
+            message: 'Please login'
+        });
     });
-});
 
-//ROUTES
-app.route("/").get((req, res) => {
-    //Change the response to render the Pug template
-    res.render('pug/index', { title: 'Hello', message: 'Please login' });
+    //Serialize | Deserialize User
+    passport.serializeUser((user, done) => {
+        done(null, user._id);
+    });
+
+    passport.deserializeUser((id, done) => {
+        myDataBase.findOne({ _id: new ObjectID(id) }, (err, doc) => {
+            done(null, doc);
+        });
+    });
+}).catch(e => {
+    app.route('/').get((req, res) => {
+        res.render('pug/index', { title: e, message: 'Unable to login' });
+    });
 });
 
 app.listen(process.env.PORT || 3000, () => {
