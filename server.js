@@ -80,11 +80,24 @@ myDB(async client => {
         })(req, res, next);
     })
 
+    app.route('/logout').get((req, res) => {
+        //req.logout();
+        res.redirect('/');
+    });
+
     app.route('/profile').get(ensureAuthenticated, (req, res) => {
         res.render('pug/profile', {
             username: req.user.username
         });
     })
+
+    //Error Handle
+    app.use((req, res, next) => {
+        res.status(404)
+            .type('text')
+            .send('Not Found');
+    });
+
 
 }).catch(e => {
     app.route('/').get((req, res) => {
@@ -95,6 +108,7 @@ myDB(async client => {
         });
     });
 });
+
 
 app.listen(process.env.PORT || 3000, () => {
     console.log("Listening on port " + process.env.PORT);
