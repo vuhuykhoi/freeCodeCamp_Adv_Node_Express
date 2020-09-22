@@ -57,7 +57,9 @@ io.use(
 );
 
 myDB(async client => {
-    const myDataBase = await client.db('freecodecamp').collection('users');
+    const myDataBase = await client
+        .db('freecodecamp') //mongo database name
+        .collection('users'); //mongo model name
 
     routes(app, myDataBase);
     auth(app, myDataBase);
@@ -73,6 +75,10 @@ myDB(async client => {
             connected: true
         });
 
+        socket.on('chat message', (message) => {
+            io.emit('chat message', { name: socket.request.user.username, message });
+        });
+
         socket.on('disconnect', () => {
             console.log('user ' + socket.request.user.username + ' disconnected');
             --currentUsers;
@@ -82,7 +88,6 @@ myDB(async client => {
                 connected: false
             });
         });
-
     });
 
 }).catch(e => {
