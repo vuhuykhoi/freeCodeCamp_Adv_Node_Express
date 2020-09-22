@@ -57,7 +57,7 @@ io.use(
 );
 
 myDB(async client => {
-    const myDataBase = await client.db('database').collection('users');
+    const myDataBase = await client.db('freecodecamp').collection('users');
 
     routes(app, myDataBase);
     auth(app, myDataBase);
@@ -65,14 +65,22 @@ myDB(async client => {
     //SOCKET PROGRAMING
     let currentUsers = 0;
     io.on('connection', (socket) => {
-        ++currentUsers;
-        io.emit('user count', currentUsers);
         console.log('user ' + socket.request.user.username + ' connected');
+        ++currentUsers;
+        io.emit('user', {
+            name: socket.request.user.username,
+            currentUsers,
+            connected: true
+        });
 
         socket.on('disconnect', () => {
-            console.log('A user has disconnected');
+            console.log('user ' + socket.request.user.username + ' disconnected');
             --currentUsers;
-            io.emit('user count', currentUsers);
+            io.emit('user', {
+                name: socket.request.user.username,
+                currentUsers,
+                connected: false
+            });
         });
 
     });
