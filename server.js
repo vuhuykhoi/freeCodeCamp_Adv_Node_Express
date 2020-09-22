@@ -37,7 +37,8 @@ myDB(async client => {
         //Change the response to render the Pug template
         res.render('pug/index', {
             title: 'Connected to Database',
-            message: 'Please login'
+            message: 'Please login',
+            showLogin: true
         });
     });
 
@@ -64,9 +65,20 @@ myDB(async client => {
         }
     ));
 
+    app.route('/login').post((req, res, next) => {
+        passport.authenticate('local', {
+            successRedirect: '/profile',
+            failureRedirect: '/'
+        })(req, res, next);
+    })
+
+    app.route('/profile').get((req, res) => {
+        res.render('/pug/profile');
+    })
+
 }).catch(e => {
     app.route('/').get((req, res) => {
-        res.render('pug/index', { title: e, message: 'Unable to login' });
+        res.render('pug/index', { title: e, showLogin: true, message: 'Unable to login' });
     });
 });
 
